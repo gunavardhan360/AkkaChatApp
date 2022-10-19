@@ -1,3 +1,3 @@
-# Akka Chat Application
+#Akka Chat Application
 
 Beginner Project by Gunavardhan Reddy
