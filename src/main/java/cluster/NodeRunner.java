@@ -1,7 +1,9 @@
 package cluster;
 
+import akka.Done;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.CoordinatedShutdown;
 import akka.management.javadsl.AkkaManagement;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -10,10 +12,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 class NodeRunner {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             startupClusterNodes(Arrays.asList("0"));
         } else {
@@ -21,24 +24,25 @@ class NodeRunner {
         }
     }
 
-    private static void startupClusterNodes(List<String> ports) throws IOException, InterruptedException {
-        Scanner sc = new Scanner(System.in);
+    private static void startupClusterNodes(List<String> ports) throws Exception {
         System.out.println("Please enter your user name before entering the chat room:");
-        String userName = sc.next();
+        String userName = getUserInput();
         System.out.printf("Start cluster on port(s) %s%n", ports);
         String port = ports.get(0);
 
         ActorSystem actorSystem = ActorSystem.create("cluster", setupClusterNodeConfig(port));
-
         AkkaManagement.get(actorSystem).start();
 
         ActorRef userHandler = actorSystem.actorOf(ClusterAwareActor.props(userName), "clusterAware");
 
-//            addCoordinatedShutdownTask(actorSystem, CoordinatedShutdown.PhaseClusterShutdown());
-
+        addCoordinatedShutdownTask(actorSystem, CoordinatedShutdown.PhaseClusterShutdown());
         actorSystem.log().info("Akka node {}", actorSystem.provider().getDefaultAddress());
 
         showMenu(userHandler);
+
+        actorSystem.stop(userHandler);
+        AkkaManagement.get(actorSystem).stop();
+        actorSystem.terminate();
     }
 
     private static String getUserInput(){
@@ -49,7 +53,7 @@ class NodeRunner {
         return res;
     }
 
-    private static void showMenu(ActorRef userHandler) throws IOException, InterruptedException {
+    private static void showMenu(ActorRef userHandler) throws Exception {
         String response;
         System.out.println("Menu \t -> Choose 1 to discover online users \t -> start with (@userName message) to send a message \t -> select anything else to exit");
         do {
@@ -72,13 +76,13 @@ class NodeRunner {
                 .withFallback(ConfigFactory.load());
     }
 
-//    private static void addCoordinatedShutdownTask(ActorSystem actorSystem, String coordindateShutdownPhase) {
-//        CoordinatedShutdown.get(actorSystem).addTask(
-//                coordindateShutdownPhase,
-//                coordindateShutdownPhase,
-//                () -> {
-//                    actorSystem.log().warning("Coordinated shutdown phase {}", coordindateShutdownPhase);
-//                    return CompletableFuture.completedFuture(Done.getInstance());
-//                });
-//    }
+    private static void addCoordinatedShutdownTask(ActorSystem actorSystem, String coordindateShutdownPhase) {
+        CoordinatedShutdown.get(actorSystem).addTask(
+                coordindateShutdownPhase,
+                coordindateShutdownPhase,
+                () -> {
+                    actorSystem.log().warning("Coordinated shutdown phase {}", coordindateShutdownPhase);
+                    return CompletableFuture.completedFuture(Done.getInstance());
+                });
+    }
 }

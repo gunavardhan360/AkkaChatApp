@@ -27,6 +27,7 @@ class ClusterAwareActor extends AbstractLoggingActor {
                 .match(String.class, s -> s.startsWith("@@"), this::handleMessage)
                 .match(String.class, s -> s.startsWith("@"), this::sendMessage)
                 .match(chatApplication.userName.class, this::displayName)
+                .matchEquals("stop", m -> getContext().stop(getSelf()))
                 .build();
     }
 

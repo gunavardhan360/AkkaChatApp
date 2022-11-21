@@ -37,27 +37,6 @@ public class main {
                 i = sc.nextInt();
                 mathactor.tell(i, ActorRef.noSender());
             }
-
-//            addCoordinatedShutdownTask(actorSystem, CoordinatedShutdown.PhaseClusterShutdown());
-//
-//            actorSystem.log().info("Akka node {}", actorSystem.provider().getDefaultAddress());
         });
     }
-
-//    private static Config setupClusterNodeConfig(String port) {
-//        return ConfigFactory.parseString(
-//                        String.format("akka.remote.netty.tcp.port=%s%n", port) +
-//                                String.format("akka.remote.artery.canonical.port=%s%n", port))
-//                .withFallback(ConfigFactory.load());
-//    }
-//
-//    private static void addCoordinatedShutdownTask(ActorSystem actorSystem, String coordindateShutdownPhase) {
-//        CoordinatedShutdown.get(actorSystem).addTask(
-//                coordindateShutdownPhase,
-//                coordindateShutdownPhase,
-//                () -> {
-//                    actorSystem.log().warning("Coordinated shutdown phase {}", coordindateShutdownPhase);
-//                    return CompletableFuture.completedFuture(Done.getInstance());
-//                });
-//    }
 }
