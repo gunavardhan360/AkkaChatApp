@@ -1,9 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
 def versions = [
         ScalaBinary: "2.13"
 ]
+
 dependencies {
-    implementation platform("com.typesafe.akka:akka-bom_${versions.ScalaBinary}:2.6.0")
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
+    implementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.36'
+
+    implementation platform("com.typesafe.akka:akka-bom_${versions.ScalaBinary}:2.7.0")
+    implementation "com.typesafe.akka:akka-remote_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-cluster_${versions.ScalaBinary}"
+    implementation "com.typesafe.akka:akka-stream_${versions.ScalaBinary}:2.7.0"
+    implementation "com.typesafe.akka:akka-cluster-sharding_${versions.ScalaBinary}:2.7.0"
+    implementation "com.typesafe.akka:akka-cluster-metrics_${versions.ScalaBinary}:2.7.0"
+    implementation "com.lightbend.akka.management:akka-management_${versions.ScalaBinary}:1.0.5"
+    implementation "com.lightbend.akka.management:akka-management-cluster-http_${versions.ScalaBinary}:1.0.5"
 
     implementation "com.typesafe.akka:akka-actor-typed_${versions.ScalaBinary}"
     testImplementation "com.typesafe.akka:akka-actor-testkit-typed_${versions.ScalaBinary}"
+
+    implementation 'de.ruedigermoeller:fst:3.0.1'
 }
