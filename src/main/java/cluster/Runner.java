@@ -4,7 +4,6 @@ import akka.Done;
 import akka.actor.ActorSystem;
 import akka.actor.CoordinatedShutdown;
 import akka.management.javadsl.AkkaManagement;
-import cluster1.ClusterListenerActor;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
