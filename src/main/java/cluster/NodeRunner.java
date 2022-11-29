@@ -8,7 +8,6 @@ import akka.management.javadsl.AkkaManagement;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -25,7 +24,7 @@ class NodeRunner {
     }
 
     private static void startupClusterNodes(List<String> ports) throws Exception {
-        System.out.println("Please enter your user name before entering the chat room:");
+        System.out.println("Please enter your Full Name before entering the chat room: [e.g. Sajal Goel]");
         String userName = getUserInput();
         System.out.printf("Start cluster on port(s) %s%n", ports);
         String port = ports.get(0);
@@ -53,19 +52,31 @@ class NodeRunner {
         return res;
     }
 
+    private static void showMenuContents(){
+        System.out.println("Menu\n\t -> Choose 1 to discover online users\n\t -> Start with (@userFirstName message) to send a message\n\t -> Start with (@all message) to send a message to everyone" +
+                "\n\t -> Start with (@few user1.user2 message) to send a message  to few users\n\t -> Type \"exit\" to exit");
+    }
+
     private static void showMenu(ActorRef userHandler) throws Exception {
         String response;
-        System.out.println("Menu \t -> Choose 1 to discover online users \t -> start with (@userName message) to send a message \t -> select anything else to exit");
+        showMenuContents();
         do {
             System.out.print("-> ");
             response = getUserInput();
             if(response.equals("1")){
-                userHandler.tell("onlineUserList", ActorRef.noSender());
+                userHandler.tell(new chatApplication.onlineUserList(), ActorRef.noSender());
+            } else if (response.startsWith("@all")) {
+                userHandler.tell(new chatApplication.messageAll(response), userHandler);
+            } else if (response.startsWith("@few")) {
+                userHandler.tell(new chatApplication.messageFew(response), userHandler);
             } else if (response.startsWith("@")) {
-                userHandler.tell(response, userHandler);
+                userHandler.tell(new chatApplication.messageTo(response), userHandler);
+            } else if (!response.equals("exit")) {
+                System.out.println("Please enter a valid Response");
+                showMenuContents();
             }
             TimeUnit.SECONDS.sleep(1);
-        } while (response.equals("1") | response.startsWith("@"));
+        } while (!response.equals("exit"));
 
     }
 
