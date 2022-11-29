@@ -13,7 +13,7 @@ public interface chatApplication {
         public void setUserName(String name) {
             List<String> fullName = List.of(name.split(" "));
             this.firstName = fullName.get(0);
-            this.lastName = fullName.get(1);
+            if(fullName.size() > 1) this.lastName = fullName.get(1);
         }
         public String getFirstName() { return this.firstName;}
         public String getLastName() { return this.lastName;}

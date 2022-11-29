@@ -7,7 +7,7 @@ repositories {
 }
 
 def versions = [
-        ScalaBinary: "2.13"
+        ScalaBinary: "2.12"
 ]
 
 dependencies {

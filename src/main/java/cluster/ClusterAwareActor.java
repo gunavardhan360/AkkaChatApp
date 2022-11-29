@@ -10,10 +10,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,15 +40,14 @@ class ClusterAwareActor extends AbstractLoggingActor {
         AtomicInteger count = new AtomicInteger();
 
         cluster.state().getMembers().forEach(member -> {
-            if (!me.equals(member) && member.status().equals(MemberStatus.up())) {
+            if (!me.equals(member) && member.status().equals(MemberStatus.up()) && !member.address().toString().contains("2551")) {
                 String path = member.address().toString() + self().path().toStringWithoutAddress();
-                System.out.println(path);
                 ActorSelection actorSelection = context().actorSelection(path);
                 System.out.println("@" + getUserName(actorSelection));
                 count.getAndIncrement();
             }
         });
-        if(count.get() <= 1) System.out.println("No Online Users are present right now!!!");
+        if(count.get() <= 0) System.out.println("No Online Users are present right now!!!");
     }
 
     private void sendMessage(chatApplication.messageAll msgAll){
@@ -83,13 +79,13 @@ class ClusterAwareActor extends AbstractLoggingActor {
     private List<ActorSelection> getActorWithUserName(List<String> userNames) {
         Member me = cluster.selfMember();
         log().info("I {} am querying for list", me);
-        List<ActorSelection> actorSelections = null;
+        List<ActorSelection> actorSelections = new ArrayList<>();
         for(Member member: cluster.state().getMembers()){
             if (!me.equals(member) && member.status().equals(MemberStatus.up()) && !member.address().toString().contains("2551")) {
                 String path = member.address().toString() + self().path().toStringWithoutAddress();
                 ActorSelection temp = context().actorSelection(path);
                 String tempName = getUserName(temp).split(" ")[0];
-                if(userNames == null | userNames.contains(tempName))
+                if(userNames == null || userNames.contains(tempName))
                     actorSelections.add(temp);
             }
         }
