@@ -25,7 +25,7 @@ public interface chatApplication {
         public messageAll(String msg) {
             msg = msg.trim();
             List<String> words = List.of(msg.split(" "));
-            this.message = String.join("", words.subList(1, words.size()));
+            this.message = String.join(" ", words.subList(1, words.size()));
         }
         public String getMessage() { return this.message; }
     }
@@ -38,7 +38,7 @@ public interface chatApplication {
             msg = msg.trim();
             List<String> words = List.of(msg.split(" "));
             this.userNames = Arrays.asList(words.get(1).split("\\."));
-            this.message = String.join("", words.subList(2, words.size()));
+            this.message = String.join(" ", words.subList(2, words.size()));
         }
         public List<String> getUserNames() { return this.userNames; }
         public String getMessage() { return this.message; }
@@ -52,7 +52,7 @@ public interface chatApplication {
             msg = msg.trim();
             List<String> words = List.of(msg.split(" "));
             this.messageTo = words.get(0).substring(1);
-            this.message = String.join("", words.subList(1, words.size()));
+            this.message = String.join(" ", words.subList(1, words.size()));
         }
         public String getMessageTo() { return this.messageTo; }
         public String getMessage() { return this.message; }

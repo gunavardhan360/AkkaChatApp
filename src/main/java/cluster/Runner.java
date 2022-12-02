@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 class Runner {
     public static void main(String[] args) {
         if (args.length == 0) {
-            startupClusterNodes(Arrays.asList("2552"));
+            startupClusterNodes(Arrays.asList("2551"));
         } else {
             startupClusterNodes(Arrays.asList(args));
         }
