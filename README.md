@@ -22,7 +22,9 @@ After building the Gradle Project on JDK >= 11
     Step - 1 : Run the Runner Class in a JVM which starts the ClusterListenerActor. After the setup
     Step - 2 : Run the instance of NodeRunner Class in differet JVMs as per the number of users, who want to use the application
 
-All required files are in Cluster Folder
+All required files are in Cluster Folder. 
+
+Note: ClusterListener Actor is configured run on 2551. If that port is occupied and want to change, do appropriate changes in line no.44,85 in ClusterAwareActor as well.
 
 Then each user will be presented with a menu as shown below -
 

@@ -35,6 +35,7 @@ class ClusterAwareActor extends AbstractLoggingActor {
     }
 
     private void onlineUserList() {
+        getSender().tell("Querying", self());
         Member me = cluster.selfMember();
         log().info("I {} am querying for list", me);
         AtomicInteger count = new AtomicInteger();
@@ -68,9 +69,9 @@ class ClusterAwareActor extends AbstractLoggingActor {
     }
 
     private void sendMessage(chatApplication.messageTo msgTo){
-        List<ActorSelection> actorSelection = getActorWithUserName(List.of(new String[]{msgTo.getMessageTo()}));
+        ActorSelection actorSelection = getActorWithUserName(List.of(new String[]{msgTo.getMessageTo()})).get(0);
         if(actorSelection != null){
-            actorSelection.get(0).tell(new chatApplication.messageFrom(this.user.getFirstName(), msgTo.getMessage()), self());
+            actorSelection.tell(new chatApplication.messageFrom(this.user.getFirstName(), msgTo.getMessage()), ActorRef.noSender());
         } else {
             System.out.println("No user found with First Name as " + msgTo.getMessageTo());
         }
@@ -107,6 +108,7 @@ class ClusterAwareActor extends AbstractLoggingActor {
 
     private void handleMessage(chatApplication.messageFrom msgFrom){
         System.out.println("Message From User " + msgFrom.getMessageFrom() + " -> " + msgFrom.getMessage() + "\n-> ");
+        getSender().tell("Message Sent", self());
     }
 
     private void printError(Object o) { System.out.println("Not a valid Functionality"); }
