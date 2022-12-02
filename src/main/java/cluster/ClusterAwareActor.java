@@ -68,11 +68,11 @@ class ClusterAwareActor extends AbstractLoggingActor {
     }
 
     private void sendMessage(chatApplication.messageTo msgTo){
-        ActorSelection actorSelection = getActorWithUserName(List.of(new String[]{msgTo.getMessageTo()})).get(0);
+        List<ActorSelection> actorSelection = getActorWithUserName(List.of(new String[]{msgTo.getMessageTo()}));
         if(actorSelection != null){
-            actorSelection.tell(new chatApplication.messageFrom(this.user.getFirstName(), msgTo.getMessage()), self());
+            actorSelection.get(0).tell(new chatApplication.messageFrom(this.user.getFirstName(), msgTo.getMessage()), self());
         } else {
-            System.out.println("No user found with First Name as " + msgTo.getMessageTo() + "\n-> ");
+            System.out.println("No user found with First Name as " + msgTo.getMessageTo());
         }
     }
 
@@ -89,6 +89,7 @@ class ClusterAwareActor extends AbstractLoggingActor {
                     actorSelections.add(temp);
             }
         }
+        if(actorSelections.isEmpty()) return null;
         return actorSelections;
     }
 

@@ -19,7 +19,7 @@ public interface chatApplication {
         public String getLastName() { return this.lastName;}
     }
 
-    class messageAll implements Serializable {
+    class messageAll {
         private String message;
 
         public messageAll(String msg) {
